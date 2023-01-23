@@ -1,2 +1,1 @@
-# blackjack
-A blackjack game
+# A Basic Blackjack Game

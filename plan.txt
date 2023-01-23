@@ -1,0 +1,63 @@
+game starts
+
+player chooses bet up to their amount of chips
+
+player is dealt card
+dealer is dealt card faced down
+
+player is dealt card
+dealer is dealt card
+
+if player has 21
+    check dealer cards
+    if dealer has 21
+        push
+    else
+        player is paid out 2.5x bet
+    
+    break
+
+
+
+if dealer up card is ace then offer inusrance
+check for 21
+    if 21 then game over player loses
+    else continue
+
+
+??Double ??Split ??
+
+
+player chooses to hit or stand
+
+while not stands or bust
+    card dealt to players hand
+    player has new total
+    if toatal is > 21 
+        player bust
+        dealer can show their cards but don't need to do anything
+    
+    if score = 21 continue
+    if player stands continue
+
+
+dealer shows cards
+while dealer total < 17
+    dealer hits
+
+if player more than dealer or dealer bust
+    pay out
+
+game ends
+
+
+
+
+
+
+
+Game has player and dealer (dealer type of player?)
+
+
+
+
