@@ -21,9 +21,20 @@ class Deck:
         else:
             return self.cards.pop()
 
+    def no_of_cards(self):
+        return len(self.cards)
+
+    def reset(self):
+        self.__init__()
+
 
 if __name__ == "__main__":
     deck = Deck()
     card1 = deck.deal()
 
     print(str(card1))
+    print(deck.no_of_cards())
+
+    deck.reset()
+
+    print(deck.no_of_cards())
