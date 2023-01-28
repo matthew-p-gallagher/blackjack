@@ -11,20 +11,58 @@ class Game:
         self.pot = 0
 
     def display_info(self):
-        print("---Blackjack---")
-        print()
-        print("Dealer stands on 17")
-        print("Insurance pays 3:2")
-        print()
-        print("You have " + str(self.player.chips) + " chips")
-        print()
+        print(f"""
+        ---Blackjack---
+
+        Dealer stands on 17
+        Insurance pays 2:1
+        
+        You have  {str(self.player.chips)} chips
+        """)
 
     def play(self):
 
-        self.pot = self.player.place_bet()
+        self.pot = self.player.choose_bet()
         self.deal_cards()
-        self.check_blackjack()
-        self.hit_or_stand()
+        self.check_player_blackjack()
+        self.check_dealer_blackjack()
+        self.player_play()
+        self.dealer_play()
+        if not (self.player.hand.bust or self.dealer.hand.bust):
+            if self.player.hand.total > self.dealer.hand.total:
+                print("You win!")
+                self.pot *= 2
+                self.pay_out()
+            elif self.player.hand.total == self.dealer.hand.total:
+                print("Push")
+                self.pay_out()
+            else:
+                print("You lose")
+
+    def player_play(self):
+        while not (self.player.stand or self.player.hand.bust):
+            self.hit_or_stand()
+
+        if self.player.hand.bust:
+            print(self.dealer.hand.cards[1])
+            print(f"Dealer total: {self.dealer.hand.total}")
+            print("You lose")
+            return False
+        else:
+            return True
+
+    def dealer_play(self):
+        print(self.dealer.hand.cards[1])
+        while not (self.dealer.hand.total >= 17):
+            self.dealer.hand.add_card(self.deck.deal())
+            print(self.dealer.hand.cards[-1])
+
+        print(f"Dealer total: {self.dealer.hand.total}")
+
+        if self.dealer.hand.bust:
+            print("Dealer busts!")
+            self.pot *= 2
+            self.pay_out()
 
     def check_player_blackjack(self):
         if self.player.hand.total == 21:
@@ -37,7 +75,7 @@ class Game:
 
     def check_dealer_blackjack(self):
         if self.dealer.hand.cards[0].rank == 1:
-            cost = self.pot // 2
+            cost = self.pot / 2
             print("Dealer has an Ace")
             print("Insurance costs " + str(cost) + " chips")
             insurance = self.player.place_insurance(cost)
@@ -46,9 +84,30 @@ class Game:
                 self.pot = insurance * 3
                 self.pay_out()
 
+    def hit_or_stand(self):
+        choice = input("Hit or Stand? (h/s): ")
+        if choice == "h":
+            self.player.hand.add_card(self.deck.deal())
+
+            print(self.player.hand.cards[-1])
+            print(f"Player total: {self.player.hand.total}")
+            if self.player.hand.bust:
+                print("You busted!")
+            elif self.player.hand.total == 21:
+                self.player.stand = True
+            else:
+                self.hit_or_stand()
+        elif choice == "s":
+            print("You stand on ", self.player.hand.total)
+            self.player.stand = True
+        else:
+            print("Please enter h or s.")
+            self.hit_or_stand()
+
     def pay_out(self):
         print(f"You win {self.pot}")
         self.player.add_chips(self.pot)
+        print("You have " + str(self.player.chips) + " chips")
 
     def deal_cards(self):
         self.player.hand.add_card(self.deck.deal())
@@ -63,24 +122,6 @@ class Game:
         print("Dealer's hand: ")
         print(self.dealer.hand.cards[0])
         print("----------")
-
-    def hit_or_stand(self):
-
-        choice = input("Hit or Stand? (h/s): ")
-        if choice == "h":
-            self.player.hand.add_card(self.deck.deal())
-
-            print(self.player.hand.cards[-1])
-            print(f"Player total: {self.player.hand.total}")
-            if self.player.hand.bust:
-                print("You busted!")
-            else:
-                self.hit_or_stand()
-        elif choice == "s":
-            print("You stand on ", self.player.hand.total)
-        else:
-            print("Please enter h or s.")
-            self.hit_or_stand()
 
 
 if __name__ == "__main__":

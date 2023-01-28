@@ -5,11 +5,13 @@ class Player:
     def __init__(self):
         self.hand = Hand()
         self.chips = 100
+        self.stand = False
 
     def place_chips(self, chips):
         if chips > self.chips:
             print("Can't place + " + str(chips) + " chips")
             print("You only have " + str(self.chips) + " chips")
+            return 0
         else:
             self.chips -= chips
             return chips
