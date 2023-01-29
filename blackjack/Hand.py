@@ -2,8 +2,7 @@ from blackjack.Card import Card
 import os
 import sys
 
-parentddir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), os.path.pardir))
+parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
 
 
@@ -23,8 +22,7 @@ class Hand:
             if self.soft:
                 self.total -= 10
                 self.remove_soft()
-                print(f"Player total: {self.total}" +
-                      " soft" * int(self.soft))
+                print(f"Player total: {self.total}" + " soft" * int(self.soft))
             else:
                 self.bust = True
                 print("You busted!")

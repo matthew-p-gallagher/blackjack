@@ -4,13 +4,11 @@ import random
 import os
 import sys
 
-parentddir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), os.path.pardir))
+parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
 
 
 class Deck:
-
     def __init__(self):
         self.cards = []
         for suit in range(4):

@@ -1,12 +1,12 @@
-from blackjack.Dealer import Dealer
-from blackjack.Player import Player
-from blackjack.Deck import Deck
 import os
 import sys
 
-parentddir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), os.path.pardir))
+parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
+
+from blackjack.Dealer import Dealer
+from blackjack.Player import Player
+from blackjack.Deck import Deck
 
 
 class Game:
@@ -17,14 +17,16 @@ class Game:
         self.pot = 0
 
     def display_info(self):
-        print(f"""
+        print(
+            f"""
         ---Blackjack---
 
         Dealer stands on 17
         Insurance pays 2:1
         
         You have  {str(self.player.chips)} chips
-        """)
+        """
+        )
 
     def play(self):
 
@@ -96,8 +98,10 @@ class Game:
         if choice == "h":
             self.player.hand.add_card(self.deck.deal())
             print(self.player.hand.cards[-1])
-            print(f"Player total: {self.player.hand.total}" +
-                  " soft" * int(self.player.hand.soft))
+            print(
+                f"Player total: {self.player.hand.total}"
+                + " soft" * int(self.player.hand.soft)
+            )
             if not self.player.hand.bust:
                 if self.player.hand.total == 21:
                     self.player.stand = True
@@ -123,8 +127,10 @@ class Game:
         print("Player's hand: ")
         for card in self.player.hand.cards:
             print(card)
-        print(f"Player total: {self.player.hand.total}" +
-              " soft" * int(self.player.hand.soft))
+        print(
+            f"Player total: {self.player.hand.total}"
+            + " soft" * int(self.player.hand.soft)
+        )
 
         print("Dealer's hand: ")
         print(self.dealer.hand.cards[0])

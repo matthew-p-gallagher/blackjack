@@ -1,6 +1,4 @@
-
 class Card:
-
     def __init__(self, suit: int, rank: int) -> None:
         self.validate_params(suit, rank)
         self.suit = suit
