@@ -1,5 +1,4 @@
 from Card import Card
-from Deck import Deck
 
 
 class Hand:
@@ -15,7 +14,14 @@ class Hand:
             self.soft = True
         self.total += card.score
         if self.total > 21:
-            self.bust = True
+            if self.soft:
+                self.total -= 10
+                self.remove_soft()
+                print(f"Player total: {self.total}" +
+                      " soft" * int(self.soft))
+            else:
+                self.bust = True
+                print("You busted!")
 
     def remove_soft(self):
         for i in range(len(self.cards)):
@@ -34,12 +40,12 @@ class Hand:
 
 
 if __name__ == "__main__":
-    deck = Deck()
     hand = Hand()
-    hand.add_card(deck.deal())
-    hand.add_card(deck.deal())
-    print(f"""
-    {str(hand.cards[0])}
-    {str(hand.cards[1])}
-    Total:{hand.total}
-    """)
+    card1 = Card(0, 1)
+    card2 = Card(1, 1)
+    hand.add_card(card1)
+    hand.add_card(card2)
+    print(hand.cards)
+    print(hand.total)
+    print(hand.soft)
+    print(hand.bust)

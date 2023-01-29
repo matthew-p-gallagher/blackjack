@@ -11,6 +11,12 @@ class Deck:
             for rank in range(1, 14):
                 self.cards.append(Card(suit, rank))
         self.shuffle()
+        self.encode_deck()
+
+    def encode_deck(self):
+        self.encoded = ""
+        for card in self.cards:
+            self.encoded += str(card.suit) + str(card.rank)
 
     def shuffle(self):
         random.shuffle(self.cards)
@@ -30,11 +36,3 @@ class Deck:
 
 if __name__ == "__main__":
     deck = Deck()
-    card1 = deck.deal()
-
-    print(str(card1))
-    print(deck.no_of_cards())
-
-    deck.reset()
-
-    print(deck.no_of_cards())
