@@ -1,9 +1,6 @@
 import pytest
 
-from Game import Game
-from Deck import Deck
-from Player import Player
-from Dealer import Dealer
+from blackjack.Game import Game
 
 
 @pytest.fixture

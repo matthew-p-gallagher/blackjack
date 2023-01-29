@@ -1,3 +1,4 @@
+
 class Card:
 
     def __init__(self, suit: int, rank: int) -> None:

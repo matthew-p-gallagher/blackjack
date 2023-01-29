@@ -1,6 +1,12 @@
+from blackjack.Card import Card
 import random
 
-from Card import Card
+import os
+import sys
+
+parentddir = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), os.path.pardir))
+sys.path.append(parentddir)
 
 
 class Deck:
@@ -11,7 +17,6 @@ class Deck:
             for rank in range(1, 14):
                 self.cards.append(Card(suit, rank))
         self.shuffle()
-        self.encode_deck()
 
     def encode_deck(self):
         self.encoded = ""
@@ -20,6 +25,7 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.cards)
+        self.encode_deck()
 
     def deal(self):
         if len(self.cards) == 0:

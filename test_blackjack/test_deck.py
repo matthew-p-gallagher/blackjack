@@ -1,7 +1,7 @@
 import pytest
 
-from Deck import Deck
-from Card import Card
+from blackjack.Deck import Deck
+from blackjack.Card import Card
 
 
 @pytest.fixture
@@ -17,10 +17,11 @@ def unshuffled():
 def test_deck_init(deck, unshuffled):
     assert deck.no_of_cards() == 52
 
+    card_details = [(card.suit, card.rank) for card in deck.cards]
     for suit in range(4):
         for rank in range(1, 14):
-            card = Card(suit, rank)
-            assert card in deck.cards
+            card = (suit, rank)
+            assert card in card_details
 
     assert deck.encoded != unshuffled
 
@@ -49,8 +50,8 @@ def test_deal_no_cards(deck):
 def test_reset(deck):
     deck.reset()
     assert deck.no_of_cards() == 52
-
+    card_details = [(card.suit, card.rank) for card in deck.cards]
     for suit in range(4):
         for rank in range(1, 14):
-            card = Card(suit, rank)
-            assert card in deck.cards
+            card = (suit, rank)
+            assert card in card_details

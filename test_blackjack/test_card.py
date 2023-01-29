@@ -1,6 +1,6 @@
 import pytest
 
-from Card import Card
+from blackjack.Card import Card
 
 
 def test_card_init():
@@ -14,7 +14,7 @@ def test_card_init():
 
     # Jack
     card = Card(1, 11)
-    assert card.suit == 0
+    assert card.suit == 1
     assert card.rank == 11
     assert not card.soft
     assert card.score == 10
@@ -22,7 +22,7 @@ def test_card_init():
 
     # King
     card = Card(2, 13)
-    assert card.suit == 0
+    assert card.suit == 2
     assert card.rank == 13
     assert not card.soft
     assert card.score == 10
@@ -30,7 +30,7 @@ def test_card_init():
 
     # Number card
     card = Card(3, 5)
-    assert card.suit == 0
+    assert card.suit == 3
     assert card.rank == 5
     assert not card.soft
     assert card.score == 5

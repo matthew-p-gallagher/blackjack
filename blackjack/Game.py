@@ -1,6 +1,12 @@
-from Deck import Deck
-from Player import Player
-from Dealer import Dealer
+import os
+import sys
+
+parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+sys.path.append(parentddir)
+
+from blackjack.Deck import Deck
+from blackjack.Player import Player
+from blackjack.Dealer import Dealer
 
 
 class Game:
@@ -127,10 +133,3 @@ class Game:
         self.player.reset()
         self.dealer.reset()
         self.deck.reset()
-
-
-if __name__ == "__main__":
-    game = Game()
-    game.display_info()
-    while True:
-        game.play()

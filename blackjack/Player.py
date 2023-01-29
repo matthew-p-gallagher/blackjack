@@ -1,4 +1,11 @@
-from Hand import Hand
+
+import os
+import sys
+
+parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+sys.path.append(parentddir)
+
+from blackjack.Hand import Hand
 
 
 class Player:
