@@ -88,11 +88,18 @@ class Game:
         choice = input("Hit or Stand? (h/s): ")
         if choice == "h":
             self.player.hand.add_card(self.deck.deal())
-
             print(self.player.hand.cards[-1])
-            print(f"Player total: {self.player.hand.total}")
+            print(f"Player total: {self.player.hand.total}" +
+                  " soft" * int(self.player.hand.soft))
             if self.player.hand.bust:
-                print("You busted!")
+                if self.player.hand.soft:
+                    self.player.hand.total -= 10
+                    self.player.hand.remove_soft()
+                    self.player.hand.bust = False
+                    print(f"Player total: {self.player.hand.total}" +
+                          " soft" * int(self.player.hand.soft))
+                else:
+                    print("You busted!")
             elif self.player.hand.total == 21:
                 self.player.stand = True
             else:
@@ -117,7 +124,8 @@ class Game:
         print("Player's hand: ")
         for card in self.player.hand.cards:
             print(card)
-        print(f"Player total: {self.player.hand.total}")
+        print(f"Player total: {self.player.hand.total}" +
+              " soft" * int(self.player.hand.soft))
 
         print("Dealer's hand: ")
         print(self.dealer.hand.cards[0])
