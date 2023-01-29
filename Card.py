@@ -1,6 +1,7 @@
 class Card:
 
     def __init__(self, suit: int, rank: int) -> None:
+        self.validate_params(suit, rank)
         self.suit = suit
         self.rank = rank
         self.soft = False
@@ -17,6 +18,13 @@ class Card:
             self.score = self.rank
 
         self.img_path = f"images\\{suit}_{rank}.png"
+
+    @staticmethod
+    def validate_params(suit, rank) -> None:
+        if suit not in range(4):
+            raise ValueError("Invalid identifier int: suit")
+        if rank not in range(1, 14):
+            raise ValueError("Invalid identifier int: rank")
 
     def __str__(self) -> str:
 

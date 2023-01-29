@@ -34,3 +34,7 @@ class Player:
 
     def add_chips(self, chips):
         self.chips += chips
+
+    def reset(self):
+        self.hand.reset()
+        self.stand = False

@@ -27,7 +27,13 @@ class Game:
         self.check_player_blackjack()
         self.check_dealer_blackjack()
         self.player_play()
-        self.dealer_play()
+        if self.player.hand.bust:
+            print(self.dealer.hand.cards[1])
+            print(f"Dealer total: {self.dealer.hand.total}")
+            print("You lose")
+            print("You have " + str(self.player.chips) + " chips")
+        else:
+            self.dealer_play()
         if not (self.player.hand.bust or self.dealer.hand.bust):
             if self.player.hand.total > self.dealer.hand.total:
                 print("You win!")
@@ -38,18 +44,11 @@ class Game:
                 self.pay_out()
             else:
                 print("You lose")
+        self.game_reset()
 
     def player_play(self):
         while not (self.player.stand or self.player.hand.bust):
             self.hit_or_stand()
-
-        if self.player.hand.bust:
-            print(self.dealer.hand.cards[1])
-            print(f"Dealer total: {self.dealer.hand.total}")
-            print("You lose")
-            return False
-        else:
-            return True
 
     def dealer_play(self):
         print(self.dealer.hand.cards[1])
@@ -131,8 +130,14 @@ class Game:
         print(self.dealer.hand.cards[0])
         print("----------")
 
+    def game_reset(self):
+        self.player.reset()
+        self.dealer.reset()
+        self.deck.reset()
+
 
 if __name__ == "__main__":
     game = Game()
     game.display_info()
-    game.play()
+    while True:
+        game.play()
