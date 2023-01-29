@@ -1,10 +1,10 @@
+from blackjack.Card import Card
 import os
 import sys
 
-parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+parentddir = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
-
-from blackjack.Card import Card
 
 
 class Hand:

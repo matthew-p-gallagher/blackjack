@@ -1,12 +1,12 @@
+from blackjack.Dealer import Dealer
+from blackjack.Player import Player
+from blackjack.Deck import Deck
 import os
 import sys
 
-parentddir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir))
+parentddir = os.path.abspath(os.path.join(
+    os.path.dirname(__file__), os.path.pardir))
 sys.path.append(parentddir)
-
-from blackjack.Deck import Deck
-from blackjack.Player import Player
-from blackjack.Dealer import Dealer
 
 
 class Game:
@@ -98,10 +98,11 @@ class Game:
             print(self.player.hand.cards[-1])
             print(f"Player total: {self.player.hand.total}" +
                   " soft" * int(self.player.hand.soft))
-            if self.player.hand.total == 21:
-                self.player.stand = True
-            else:
-                self.hit_or_stand()
+            if not self.player.hand.bust:
+                if self.player.hand.total == 21:
+                    self.player.stand = True
+                else:
+                    self.hit_or_stand()
         elif choice == "s":
             print("You stand on ", self.player.hand.total)
             self.player.stand = True
