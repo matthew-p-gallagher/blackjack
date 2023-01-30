@@ -32,26 +32,25 @@ class Game:
 
         self.pot = self.player.choose_bet()
         self.deal_cards()
-        self.check_player_blackjack()
-        self.check_dealer_blackjack()
-        self.player_play()
-        if self.player.hand.bust:
-            print(self.dealer.hand.cards[1])
-            print(f"Dealer total: {self.dealer.hand.total}")
-            print("You lose")
-            print("You have " + str(self.player.chips) + " chips")
-        else:
-            self.dealer_play()
-        if not (self.player.hand.bust or self.dealer.hand.bust):
-            if self.player.hand.total > self.dealer.hand.total:
-                print("You win!")
-                self.pot *= 2
-                self.pay_out()
-            elif self.player.hand.total == self.dealer.hand.total:
-                print("Push")
-                self.pay_out()
-            else:
-                print("You lose")
+        if not self.check_player_blackjack():
+            if not self.check_dealer_blackjack():
+                self.player_play()
+                if self.player.hand.bust:
+                    print(self.dealer.hand.cards[1])
+                    print(f"Dealer total: {self.dealer.hand.total}")
+                    print("You lose")
+                    print("You have " + str(self.player.chips) + " chips")
+                else:
+                    self.dealer_play()
+                if not (self.player.hand.bust or self.dealer.hand.bust):
+                    if self.player.hand.total > self.dealer.hand.total:
+                        print("You win!")
+                        self.pot *= 2
+                    elif self.player.hand.total == self.dealer.hand.total:
+                        print("Push")
+                    else:
+                        print("You lose")
+        self.pay_out()
         self.game_reset()
 
     def player_play(self):
@@ -69,7 +68,6 @@ class Game:
         if self.dealer.hand.bust:
             print("Dealer busts!")
             self.pot *= 2
-            self.pay_out()
 
     def check_player_blackjack(self):
         if self.player.hand.total == 21:
@@ -79,17 +77,21 @@ class Game:
             else:
                 print("Blackjack!")
                 self.pot *= 2.5
+            return True
+        else:
+            return False
 
-    def check_dealer_blackjack(self):
+    def check_dealer_blackjack(self, choice=None):
         if self.dealer.hand.cards[0].rank == 1:
             cost = self.pot / 2
             print("Dealer has an Ace")
             print("Insurance costs " + str(cost) + " chips")
-            insurance = self.player.place_insurance(cost)
+            insurance = self.player.place_insurance(cost, choice)
             if self.dealer.hand.total == 21:
                 print("Dealer has Blackjack!")
                 self.pot = insurance * 3
-                self.pay_out()
+                return True
+        return False
 
     def hit_or_stand(self, choice=None):
         if choice == None:
@@ -118,6 +120,7 @@ class Game:
         print(f"You win {self.pot}")
         self.player.add_chips(self.pot)
         print("You have " + str(self.player.chips) + " chips")
+        self.pot = 0
 
     def deal_cards(self):
         self.player.hand.add_card(self.deck.deal())
@@ -140,3 +143,4 @@ class Game:
         self.player.reset()
         self.dealer.reset()
         self.deck.reset()
+        self.pot = 0

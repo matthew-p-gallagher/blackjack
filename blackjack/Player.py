@@ -30,13 +30,17 @@ class Player:
             self.choose_bet()
         return bet
 
-    def place_insurance(self, cost):
-        choice = input("Place insurance? (y/n): ")
+    def place_insurance(self, cost, choice=None):
+        if choice is None:
+            choice = input("Place insurance? (y/n): ")
         if choice == "y":
             return self.place_chips(cost)
-        else:
+        elif choice == "n":
             print("No insurance")
             return 0
+        else:
+            print("Please enter y or n")
+            self.place_insurance(cost)
 
     def add_chips(self, chips):
         self.chips += chips
