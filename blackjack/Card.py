@@ -25,6 +25,9 @@ class Card:
         if rank not in range(1, 14):
             raise ValueError("Invalid identifier int: rank")
 
+    def __eq__(self, other) -> bool:
+        return self.suit == other.suit and self.rank == other.rank
+
     def __str__(self) -> str:
 
         suits = ["Hearts", "Diamonds", "Clubs", "Spades"]
