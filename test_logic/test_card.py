@@ -1,6 +1,6 @@
 import pytest
 
-from logic.Card import Card
+from game_logic import Card
 
 
 def test_card_init():
@@ -10,7 +10,7 @@ def test_card_init():
     assert card.rank == 1
     assert card.soft
     assert card.score == 11
-    assert card.img_path == "images\\0_1.png"
+    assert card.id == "ace_of_hearts"
 
     # Jack
     card = Card(1, 11)
@@ -18,7 +18,7 @@ def test_card_init():
     assert card.rank == 11
     assert not card.soft
     assert card.score == 10
-    assert card.img_path == "images\\1_11.png"
+    assert card.id == "jack_of_diamonds"
 
     # King
     card = Card(2, 13)
@@ -26,7 +26,7 @@ def test_card_init():
     assert card.rank == 13
     assert not card.soft
     assert card.score == 10
-    assert card.img_path == "images\\2_13.png"
+    assert card.id == "king_of_clubs"
 
     # Number card
     card = Card(3, 5)
@@ -34,7 +34,7 @@ def test_card_init():
     assert card.rank == 5
     assert not card.soft
     assert card.score == 5
-    assert card.img_path == "images\\3_5.png"
+    assert card.id == "5_of_spades"
 
 
 def test_card_validate_params():

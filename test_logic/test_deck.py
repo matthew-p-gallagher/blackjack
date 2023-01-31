@@ -1,7 +1,7 @@
 import pytest
 
-from logic.Deck import Deck
-from logic.Card import Card
+from game_logic import Deck
+from game_logic import Card
 
 
 @pytest.fixture

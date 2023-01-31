@@ -1,10 +1,10 @@
 import pytest
 
-from logic.Game import Game
-from logic.Dealer import Dealer
-from logic.Player import Player
-from logic.Deck import Deck
-from logic.Card import Card
+from game_logic import Game
+from game_logic import Dealer
+from game_logic import Player
+from game_logic import Deck
+from game_logic import Card
 
 
 @pytest.fixture

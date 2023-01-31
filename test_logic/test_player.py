@@ -1,7 +1,7 @@
 import pytest
 
-from logic.Player import Player
-from logic.Hand import Hand
+from game_logic import Player
+from game_logic import Hand
 
 
 @pytest.fixture
