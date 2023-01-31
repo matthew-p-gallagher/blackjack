@@ -1,0 +1,36 @@
+body{
+    margin: 50px;
+    background-color: rgb(42, 97, 40);
+}
+
+.cards-container{
+
+    background-color: rgb(47, 110, 45);
+    border-radius: 10px;
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
+.card{
+    width: 160px;
+    height: 232px;
+    margin: 5px;
+    background-color: rgb(252, 247, 230);
+    border-radius: 10px;
+    box-shadow: 3px 6px 6px 0 black;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: 0.5s;
+    position: relative;
+}
