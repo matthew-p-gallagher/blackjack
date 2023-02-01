@@ -98,12 +98,8 @@ class Hand:
             if self.soft:
                 self.total -= 10
                 self.remove_soft()
-                # display_total()
-                print(f"Player total: {self.total}" + " soft" * int(self.soft))
             else:
                 self.bust = True
-                # display_total()
-                print("You busted!")
 
     def remove_soft(self):
         for i in range(len(self.cards)):
@@ -148,10 +144,9 @@ class Player:
         if choice is None:
             choice = input("Place insurance? (y/n): ")
         if choice == "y":
-            return self.place_chips(cost)
+            return True
         elif choice == "n":
-            print("No insurance")
-            return 0
+            return False
         else:
             print("Please enter y or n")
             self.place_insurance(cost)
@@ -159,128 +154,138 @@ class Player:
     def add_chips(self, chips):
         self.chips += chips
 
-    def reset(self):
-        self.hand.reset()
-        self.stand = False
-
 
 class Dealer:
     def __init__(self):
         self.hand = Hand()
 
-    def reset(self):
-        self.hand.reset()
-
 
 class Game:
+
+    PREGAME = 0
+    PLAYER_BJ = 1
+    DEALER_BJ = 2
+    PLAYER_PLAY = 3
+    DEALER_PLAY = 4
+    END = 5
+
     def __init__(self):
-        self.inplay = False
+        self.status = self.PREGAME
         self.deck = Deck()
         self.player = Player()
         self.dealer = Dealer()
         self.pot = 0
+        self.result = None
+        self.messages = []
 
     def display_info(self):
-        print(
-            f"""
-        ---Blackjack---
+        self.messages += [
+            "Dealer stands on 17",
+            "Insurance pays 2:1",
+            f"""You have  {str(self.player.chips)} chips""",
+        ]
 
-        Dealer stands on 17
-        Insurance pays 2:1
-        
-        You have  {str(self.player.chips)} chips
-        """
-        )
+    def clear_messages(self):
+        self.messages = []
 
     def play_round(self, bet):
+        self.status = 6
+
         self.pot = bet
         self.deal_cards()
-        # if not self.check_player_blackjack():
-        #     if not self.check_dealer_blackjack():
-        #         self.player_play()
-        #         if self.player.hand.bust:
-        #             print(self.dealer.hand.cards[1])
-        #             print(f"Dealer total: {self.dealer.hand.total}")
-        #             print("You lose")
-        #             print("You have " + str(self.player.chips) + " chips")
-        #         else:
-        #             self.dealer_play()
-        #         if not (self.player.hand.bust or self.dealer.hand.bust):
-        #             if self.player.hand.total > self.dealer.hand.total:
-        #                 print("You win!")
-        #                 self.pot *= 2
-        #             elif self.player.hand.total == self.dealer.hand.total:
-        #                 print("Push")
-        #             else:
-        #                 print("You lose")
-        # self.pay_out()
-        # self.game_reset()
-
-    def player_play(self):
-        while not (self.player.stand or self.player.hand.bust):
-            self.hit_or_stand()
-
-    def dealer_play(self):
-        print(self.dealer.hand.cards[1])
-        while not (self.dealer.hand.total >= 17):
-            self.dealer.hand.add_card(self.deck.deal())
-            print(self.dealer.hand.cards[-1])
-
-        print(f"Dealer total: {self.dealer.hand.total}")
-
-        if self.dealer.hand.bust:
-            print("Dealer busts!")
-            self.pot *= 2
+        if not self.check_player_blackjack():
+            if not self.check_dealer_blackjack():
+                self.player_play()
+                if not self.status == self.END:
+                    self.dealer_play()
+                    if not self.status == self.END:
+                        self.compare_hands()
+        self.outcome()
+        self.pay_out()
 
     def check_player_blackjack(self):
         if self.player.hand.total == 21:
-            print(self.dealer.hand.cards[1])
+            # TODO Show dealer's second card
             if self.dealer.hand.total == 21:
-                print("Push")
+                self.result = "push"
             else:
-                print("Blackjack!")
-                self.pot *= 2.5
+                self.result = "bj"
+            self.status = self.END
             return True
         else:
             return False
 
     def check_dealer_blackjack(self, choice=None):
         if self.dealer.hand.cards[0].rank == 1:
-            cost = self.pot / 2
-            print("Dealer has an Ace")
-            print("Insurance costs " + str(cost) + " chips")
-            insurance = self.player.place_insurance(cost, choice)
+            # TODO: Insurance
+            # cost = self.pot / 2
+            # print("Dealer has an Ace")
+            # print("Insurance costs " + str(cost) + " chips")
+            # insurance = self.player.place_insurance(cost, choice)
             if self.dealer.hand.total == 21:
-                print("Dealer has Blackjack!")
-                self.pot = insurance * 3
+                # TODO Show dealer's second card
+                # if player.insured: self.result = "insured" else: self.result = "loss"
+                self.result = "loss"
+                self.status = self.END
                 return True
         return False
 
-    def hit_or_stand(self, choice=None):
-        if choice == None:
-            choice = input("Hit or Stand? (h/s): ")
+    def player_play(self):
+        # while not (self.player.stand or self.player.hand.bust):
+        self.hit()
+        if self.status != self.END:
+            self.stand()
 
-        if choice == "h":
-            self.player.hand.add_card(self.deck.deal())
-            print(self.player.hand.cards[-1])
-            print(
-                f"Player total: {self.player.hand.total}"
-                + " soft" * int(self.player.hand.soft)
-            )
-            if not self.player.hand.bust:
-                if self.player.hand.total == 21:
-                    self.player.stand = True
-                else:
-                    self.hit_or_stand()
-        elif choice == "s":
-            print("You stand on ", self.player.hand.total)
-            self.player.stand = True
+    def dealer_play(self):
+        # TODO: show dealer second card
+        while not (self.dealer.hand.total >= 17):
+            self.dealer.hand.add_card(self.deck.deal())
+        # TODO: update dealer score
+
+        if self.dealer.hand.bust:
+            self.result = "win"
+            self.status = self.END
+
+    def hit(self):
+        self.player.hand.add_card(self.deck.deal())
+        if self.player.hand.bust:
+            self.result = "loss"
+            self.status = self.END
+        elif self.player.hand.total == 21:
+            self.result = "win"
+            self.status = self.END
+
+    def stand(self):
+        self.status = self.DEALER_PLAY
+
+    def compare_hands(self):
+        if self.player.hand.total > self.dealer.hand.total:
+            self.result = "win"
+        elif self.player.hand.total == self.dealer.hand.total:
+            self.result = "push"
         else:
-            print("Please enter h or s.")
-            self.hit_or_stand()
+            self.result = "loss"
+        self.status = self.END
+
+    def outcome(self):
+        if self.result == "win":
+            self.messages = ["You win!"]
+            self.pot * 2
+        elif self.result == "bj":
+            self.messages = ["Blackjack!"]
+            self.pot *= 2.5
+        elif self.result == "insured":
+            self.messages = ["Dealer Blackjack with insurance"]
+            self.pot *= 1.5
+        elif self.result == "push":
+            self.messages = ["Push"]
+            pass
+        elif self.result == "loss":
+            self.messages = ["You lose"]
+            self.pot = 0
 
     def pay_out(self):
-        print(f"You win {self.pot}")
+        self.messages.append(f"You win {self.pot} chips")
         self.player.add_chips(self.pot)
         self.pot = 0
 
@@ -291,10 +296,14 @@ class Game:
         self.dealer.hand.add_card(self.deck.deal())
 
     def game_reset(self):
-        self.player.reset()
-        self.dealer.reset()
+        self.player.hand.reset()
+        self.player.stand = False
+        self.dealer.hand.reset()
         self.deck.reset()
         self.pot = 0
+        self.result = None
+        self.status = self.PREGAME
+        self.clear_messages()
 
 
 if __name__ == "__main__":

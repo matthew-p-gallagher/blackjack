@@ -14,6 +14,11 @@
     </header>
     <div id="game-container">
         <div id="game">
+
+            {% for message in get_flashed_messages() %}
+            <div class="flash-message">{{ message }}</div>
+            {% endfor %}
+
             <div id="dealer">
                 <h2>Dealer</h2>
                 <div id="dealer-cards" class="cards-container">
@@ -35,14 +40,16 @@
         </div>
     </div>
     <div id="controls">
-        {% if not game.inplay %}
+        {{ game.status }}
+        {% if game.status == 0 %}
         <form action="play_round" method="post" autocomplete="off">
             <input type="text" id="bet" name="bet" placeholder="Set bet amount">
             <input type="submit" value="Deal">
         </form>
-        {% else %}
-        <button id="hit">Hit</button>
-        <button id="stand">Stand</button>
+        {% elif game.status == 5 %}
+        <form action="reset" method="post" autocomplete="off">
+            <input type="submit" value="Play again">
+        </form>
         {% endif %}
 
     </div>
