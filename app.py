@@ -15,13 +15,29 @@ def main():
     return render_template("game.html", game=game)
 
 
-@app.route("/play_round", methods=["POST"])
-def play_round():
+@app.route("/start_round", methods=["POST"])
+def start_round():
     global game
 
     if request.method == "POST":
         bet = request.form["bet"]
-        game.play_round(int(bet))
+        game.start_round(int(bet))
+        for message in game.messages:
+            flash(message)
+
+    return redirect(url_for("main"))
+
+
+@app.route("/hit_or_stand", methods=["POST"])
+def hit_or_stand():
+    global game
+
+    if request.method == "POST":
+        if "hit" in request.form:
+            game.hit()
+        elif "stand" in request.form:
+            game.stand()
+            print(game.player.hand.cards)
         for message in game.messages:
             flash(message)
 

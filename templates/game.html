@@ -22,9 +22,21 @@
             <div id="dealer">
                 <h2>Dealer</h2>
                 <div id="dealer-cards" class="cards-container">
+                    {% if game.dealer.hidden %}
+
+                    {% for card in game.dealer.hand.cards[:-1] %}
+                    <div class="card" id={{card}}></div>
+                    <div class="card" id="nice_try"></div>
+                    {% endfor %}
+
+                    {% else %}
+
                     {% for card in game.dealer.hand.cards %}
                     <div class="card" id={{card}}></div>
                     {% endfor %}
+
+
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -40,13 +52,17 @@
         </div>
     </div>
     <div id="controls">
-        {{ game.status }}
-        {% if game.status == 0 %}
-        <form action="play_round" method="post" autocomplete="off">
+        {% if game.status == game.PREGAME %}
+        <form action="start_round" method="post" autocomplete="off">
             <input type="text" id="bet" name="bet" placeholder="Set bet amount">
             <input type="submit" value="Deal">
         </form>
-        {% elif game.status == 5 %}
+        {% elif game.status == game.PLAYER_PLAY %}
+        <form action="hit_or_stand" method="post" autocomplete="off">
+            <input type="submit" id="hit" name="hit" value="Hit">
+            <input type="submit" id="stand" name="stand" value="Stand">
+        </form>
+        {% elif game.status == game.END %}
         <form action="reset" method="post" autocomplete="off">
             <input type="submit" value="Play again">
         </form>

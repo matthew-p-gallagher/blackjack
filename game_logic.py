@@ -158,6 +158,7 @@ class Player:
 class Dealer:
     def __init__(self):
         self.hand = Hand()
+        self.hidden = True
 
 
 class Game:
@@ -188,32 +189,25 @@ class Game:
     def clear_messages(self):
         self.messages = []
 
-    def play_round(self, bet):
-        self.status = 6
-
-        self.pot = bet
+    def start_round(self, bet):
+        self.pot = self.player.place_chips(bet)
         self.deal_cards()
-        if not self.check_player_blackjack():
-            if not self.check_dealer_blackjack():
-                self.player_play()
-                if not self.status == self.END:
-                    self.dealer_play()
-                    if not self.status == self.END:
-                        self.compare_hands()
-        self.outcome()
-        self.pay_out()
+        self.check_player_blackjack()
+        if not self.status == self.END:
+            self.check_dealer_blackjack()
+        if not self.status == self.END:
+            self.status = self.PLAYER_PLAY
+        else:
+            self.outcome()
 
     def check_player_blackjack(self):
         if self.player.hand.total == 21:
-            # TODO Show dealer's second card
+            self.dealer.hidden = False
             if self.dealer.hand.total == 21:
                 self.result = "push"
             else:
                 self.result = "bj"
             self.status = self.END
-            return True
-        else:
-            return False
 
     def check_dealer_blackjack(self, choice=None):
         if self.dealer.hand.cards[0].rank == 1:
@@ -223,9 +217,9 @@ class Game:
             # print("Insurance costs " + str(cost) + " chips")
             # insurance = self.player.place_insurance(cost, choice)
             if self.dealer.hand.total == 21:
-                # TODO Show dealer's second card
+                self.dealer.hidden = False
                 # if player.insured: self.result = "insured" else: self.result = "loss"
-                self.result = "loss"
+                self.result = "lose"
                 self.status = self.END
                 return True
         return False
@@ -237,7 +231,7 @@ class Game:
             self.stand()
 
     def dealer_play(self):
-        # TODO: show dealer second card
+        self.dealer.hidden = False
         while not (self.dealer.hand.total >= 17):
             self.dealer.hand.add_card(self.deck.deal())
         # TODO: update dealer score
@@ -249,14 +243,17 @@ class Game:
     def hit(self):
         self.player.hand.add_card(self.deck.deal())
         if self.player.hand.bust:
-            self.result = "loss"
+            self.result = "lose"
             self.status = self.END
         elif self.player.hand.total == 21:
             self.result = "win"
             self.status = self.END
 
     def stand(self):
-        self.status = self.DEALER_PLAY
+        self.dealer_play()
+        if not self.status == self.END:
+            self.compare_hands()
+        self.outcome()
 
     def compare_hands(self):
         if self.player.hand.total > self.dealer.hand.total:
@@ -264,7 +261,7 @@ class Game:
         elif self.player.hand.total == self.dealer.hand.total:
             self.result = "push"
         else:
-            self.result = "loss"
+            self.result = "lose"
         self.status = self.END
 
     def outcome(self):
@@ -280,9 +277,10 @@ class Game:
         elif self.result == "push":
             self.messages = ["Push"]
             pass
-        elif self.result == "loss":
+        elif self.result == "lose":
             self.messages = ["You lose"]
             self.pot = 0
+        self.pay_out()
 
     def pay_out(self):
         self.messages.append(f"You win {self.pot} chips")
