@@ -2,8 +2,7 @@ import random
 
 
 class Card:
-    def __init__(self, suit: int, rank: int) -> None:
-        self.validate_params(suit, rank)
+    def __init__(self, suit: int, rank: int):
         self.suit = suit
         self.rank = rank
         self.soft = False
@@ -20,13 +19,6 @@ class Card:
             self.score = self.rank
 
         self.id = self.create_id()
-
-    @staticmethod
-    def validate_params(suit, rank) -> None:
-        if suit not in range(4):
-            raise ValueError("Invalid identifier int: suit")
-        if rank not in range(1, 14):
-            raise ValueError("Invalid identifier int: rank")
 
     def __eq__(self, other):
         return self.suit == other.suit and self.rank == other.rank
@@ -94,7 +86,9 @@ class Hand:
         if card.soft:
             self.soft = True
         self.total += card.score
-        if self.total > 21:
+        if self.total == 21:
+            self.soft = False
+        elif self.total > 21:
             if self.soft:
                 self.total -= 10
                 self.remove_soft()
@@ -112,6 +106,14 @@ class Hand:
                 return
 
         self.soft = False
+
+    def get_json(self):
+        return {
+            "cards": [card.id for card in self.cards],
+            "total": self.total,
+            "soft": self.soft,
+            "bust": self.bust,
+        }
 
     def reset(self):
         self.__init__()
@@ -154,11 +156,26 @@ class Player:
     def add_chips(self, chips):
         self.chips += chips
 
+    def get_json(self):
+        return {
+            "hand": self.hand.get_json(),
+            "chips": self.chips,
+            "stand": self.stand,
+        }
+
 
 class Dealer:
     def __init__(self):
         self.hand = Hand()
         self.hidden = True
+
+    def get_json(self):
+        return {
+            "hand": {"cards": [self.hand.cards[0].id, "nice_try"]}
+            if self.hidden
+            else self.hand.get_json(),
+            "hidden": self.hidden,
+        }
 
 
 class Game:
@@ -193,12 +210,16 @@ class Game:
         self.pot = self.player.place_chips(bet)
         self.deal_cards()
         self.check_player_blackjack()
-        if not self.status == self.END:
-            self.check_dealer_blackjack()
-        if not self.status == self.END:
-            self.status = self.PLAYER_PLAY
-        else:
+
+        if self.status == self.END:
             self.outcome()
+
+        self.check_dealer_blackjack()
+
+        if self.status == self.END:
+            self.outcome()
+
+        self.status = self.PLAYER_PLAY
 
     def check_player_blackjack(self):
         if self.player.hand.total == 21:
@@ -221,20 +242,15 @@ class Game:
                 # if player.insured: self.result = "insured" else: self.result = "loss"
                 self.result = "lose"
                 self.status = self.END
-                return True
-        return False
-
-    def player_play(self):
-        # while not (self.player.stand or self.player.hand.bust):
-        self.hit()
-        if self.status != self.END:
-            self.stand()
 
     def dealer_play(self):
         self.dealer.hidden = False
-        while not (self.dealer.hand.total >= 17):
-            self.dealer.hand.add_card(self.deck.deal())
-        # TODO: update dealer score
+        if self.player.hand.bust:
+            self.result = "lose"
+            self.status = self.END
+        else:
+            while not (self.dealer.hand.total >= 17):
+                self.dealer.hand.add_card(self.deck.deal())
 
         if self.dealer.hand.bust:
             self.result = "win"
@@ -246,10 +262,11 @@ class Game:
             self.result = "lose"
             self.status = self.END
         elif self.player.hand.total == 21:
-            self.result = "win"
-            self.status = self.END
+            self.stand()
 
     def stand(self):
+        self.player.stand = True
+        self.status = self.DEALER_PLAY
         self.dealer_play()
         if not self.status == self.END:
             self.compare_hands()
@@ -267,7 +284,7 @@ class Game:
     def outcome(self):
         if self.result == "win":
             self.messages = ["You win!"]
-            self.pot * 2
+            self.pot *= 2
         elif self.result == "bj":
             self.messages = ["Blackjack!"]
             self.pot *= 2.5
@@ -276,7 +293,6 @@ class Game:
             self.pot *= 1.5
         elif self.result == "push":
             self.messages = ["Push"]
-            pass
         elif self.result == "lose":
             self.messages = ["You lose"]
             self.pot = 0
@@ -297,15 +313,19 @@ class Game:
         self.player.hand.reset()
         self.player.stand = False
         self.dealer.hand.reset()
+        self.dealer.hidden = True
         self.deck.reset()
         self.pot = 0
         self.result = None
         self.status = self.PREGAME
         self.clear_messages()
 
-
-if __name__ == "__main__":
-    game = Game()
-    game.display_info()
-    while True:
-        game.play()
+    def get_json(self):
+        return {
+            "status": self.status,
+            "player": self.player.get_json(),
+            "dealer": self.dealer.get_json(),
+            "pot": self.pot,
+            "result": self.result,
+            "messages": self.messages,
+        }

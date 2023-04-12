@@ -3,10 +3,10 @@ game starts
 player chooses bet up to their amount of chips
 
 player is dealt card
-dealer is dealt card faced down
+dealer is dealt card
 
 player is dealt card
-dealer is dealt card
+dealer is dealt card faced down
 
 if player has 21
     check dealer cards

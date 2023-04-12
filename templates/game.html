@@ -1,76 +1,58 @@
 <!DOCTYPE html>
-<html>
+mess<html>
 
 <head>
     <meta charset="utf-8">
     <title>Blackjack</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/game.css') }}">
-</head>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
 
 <body>
-    <header>
-        <h1>Blackjack</h1>
-    </header>
+
+    <div id="messages">
+        {% for message in game.messages %}
+        <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+
     <div id="game-container">
         <div id="game">
-
-            {% for message in get_flashed_messages() %}
-            <div class="flash-message">{{ message }}</div>
-            {% endfor %}
-
             <div id="dealer">
                 <h2>Dealer</h2>
-                <div id="dealer-cards" class="cards-container">
-                    {% if game.dealer.hidden %}
+                <div id="dealer-area" class="play-area">
+                    <div class="total">Total: <span id="dealer-total"></span></div>
+                    <div class="cards-container" id="dealer-cards">
+                        <div class="card-placeholder"></div>
+                        <div class="card-placeholder"></div>
+                    </div>
 
-                    {% for card in game.dealer.hand.cards[:-1] %}
-                    <div class="card" id={{card}}></div>
-                    <div class="card" id="nice_try"></div>
-                    {% endfor %}
-
-                    {% else %}
-
-                    {% for card in game.dealer.hand.cards %}
-                    <div class="card" id={{card}}></div>
-                    {% endfor %}
-
-
-                    {% endif %}
                 </div>
             </div>
-        </div>
-        <div id="player">
-            <h2>Player</h2>
-            <div id="player-cards" class="cards-container">
-                {% for card in game.player.hand.cards %}
-                <div class="card" id={{card}}></div>
-                {% endfor %}
+            <div id="player">
+                <h2>Player</h2>
+                <div id="player-area" class="play-area">
+                    <div class="total">Total: <span id="player-total"></span></div>
+                    <div class="cards-container" id="player-cards">
+                        <div class="card-placeholder"></div>
+                        <div class="card-placeholder"></div>
+                    </div>
+                </div>
+                <div class="display">Stake: <span id="stake"></span></div>
+                <div class="display">Chips: <span id="chips">{{ game.player.chips }}</span></div>
+
             </div>
-            <div id="player-score">{{game.player.hand.total}}</div>
-            <div id="player-chips">{{game.player.chips}}</div>
+            <div id="controls">
+                <button class="bet-increment" id="bet-down" name="bet-up">-</button>
+                <input type="number" id="bet-amount" name="bet-amount" value="10" readonly>
+                <button class="bet-increment" id="bet-up" name="bet-up">+</button>
+                <button class="control_button" id="deal" name="deal">Deal</button>
+            </div>
         </div>
     </div>
-    <div id="controls">
-        {% if game.status == game.PREGAME %}
-        <form action="start_round" method="post" autocomplete="off">
-            <input type="text" id="bet" name="bet" placeholder="Set bet amount">
-            <input type="submit" value="Deal">
-        </form>
-        {% elif game.status == game.PLAYER_PLAY %}
-        <form action="hit_or_stand" method="post" autocomplete="off">
-            <input type="submit" id="hit" name="hit" value="Hit">
-            <input type="submit" id="stand" name="stand" value="Stand">
-        </form>
-        {% elif game.status == game.END %}
-        <form action="reset" method="post" autocomplete="off">
-            <input type="submit" value="Play again">
-        </form>
-        {% endif %}
 
-    </div>
-    </div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/game.js') }}"></script>
 
 </body>

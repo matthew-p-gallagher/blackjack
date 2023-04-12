@@ -1,5 +1,6 @@
 # A Basic Blackjack Game
 
-### Playing Card Images Attribution
+### Attributions
 
--   http://byronknoll.blogspot.com/2011/03/vector-playing-cards.html
+-   Playing Card Images - http://byronknoll.blogspot.com/2011/03/vector-playing-cards.html
+-   Favicon - https://icons8.com/icon/KzkMrym4dMoB/casino-chip

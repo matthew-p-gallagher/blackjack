@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 
 from game_logic import Game
+from game_logic import Card
 
 
 app = Flask(__name__)
@@ -10,8 +11,10 @@ game = Game()
 
 
 @app.route("/")
+@app.route("/blackjack")
 def main():
     global game
+    game.game_reset()
     return render_template("game.html", game=game)
 
 
@@ -21,27 +24,10 @@ def start_round():
 
     if request.method == "POST":
         bet = request.form["bet"]
-        game.start_round(int(bet))
-        for message in game.messages:
-            flash(message)
+        game.start_round(int(bet))  # TODO: handle when not enough chips
+        game_data = game.get_json()
 
-    return redirect(url_for("main"))
-
-
-@app.route("/hit_or_stand", methods=["POST"])
-def hit_or_stand():
-    global game
-
-    if request.method == "POST":
-        if "hit" in request.form:
-            game.hit()
-        elif "stand" in request.form:
-            game.stand()
-            print(game.player.hand.cards)
-        for message in game.messages:
-            flash(message)
-
-    return redirect(url_for("main"))
+    return jsonify(game_data)
 
 
 @app.route("/reset", methods=["POST"])
@@ -52,6 +38,26 @@ def reset():
         game.game_reset()
 
     return redirect(url_for("main"))
+
+
+@app.route("/hit", methods=["POST"])
+def hit():
+    global game
+
+    if request.method == "POST":
+        game.hit()
+        game_data = game.get_json()
+        return jsonify(game_data)
+
+
+@app.route("/stand", methods=["POST"])
+def stand():
+    global game
+
+    if request.method == "POST":
+        game.stand()
+        game_data = game.get_json()
+        return jsonify(game_data)
 
 
 if __name__ == "__main__":
